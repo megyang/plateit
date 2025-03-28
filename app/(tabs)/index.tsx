@@ -1,74 +1,56 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { ScrollView, View, SafeAreaView, StyleSheet } from 'react-native';
+import PostCard from '../../components/PostCard';
+import Header from '../../components/Header';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const samplePosts = [
+  {
+    username: 'cindy',
+    time: 'Today at 8:34PM',
+    avatar: '',
+    image: require('../../assets/images/cheesecake.jpg'),
+    caption: 'blueberry cheesecake!',
+    ingredients: [
+      '1 cup graham cracker crumbs',
+      '¾ cup melted butter',
+      '2 packages cream cheese',
+    ],
+    directions: [
+      'Preheat the oven to 325°F.',
+      'Mix crust ingredients and press into pan.',
+      'Beat cream cheese, then bake for 1 hour.',
+    ],
+  },
+  {
+    username: 'megan',
+    time: 'Yesterday at 1:51PM',
+    avatar: '',
+    image: require('C:/Users/megdy/hci_plateit/assets/images/spaghetti.jpg'),
+    caption: 'spaghetti with garlic butter 🍝',
+    ingredients: ['Spaghetti', 'Garlic', 'Butter'],
+    directions: ['Boil pasta', 'Sauté garlic in butter', 'Combine and serve'],
+  },
+];
 
-export default function HomeScreen() {
+export default function HomeFeed() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.safe}>
+      <Header />
+      <ScrollView contentContainerStyle={styles.container}>
+        {samplePosts.map((post, idx) => (
+          <PostCard key={idx} post={post} />
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  safe: {
+    flex: 1, 
+    backgroundColor: '#FEFADF', 
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  container: {
+    padding: 16,
+    paddingBottom: 100,
   },
 });

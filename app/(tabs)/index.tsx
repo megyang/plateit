@@ -24,7 +24,7 @@ const samplePosts = [
     username: 'megan',
     time: 'Yesterday at 1:51PM',
     avatar: '',
-    image: require('C:/Users/megdy/hci_plateit/assets/images/spaghetti.jpg'),
+    image: require('../../assets/images/spaghetti.jpg'),
     caption: 'spaghetti with garlic butter 🍝',
     ingredients: ['Spaghetti', 'Garlic', 'Butter'],
     directions: ['Boil pasta', 'Sauté garlic in butter', 'Combine and serve'],
@@ -49,8 +49,9 @@ const styles = StyleSheet.create({
     flex: 1, 
     backgroundColor: '#FEFADF', 
   },
+
   container: {
-    padding: 16,
+    padding: 0,
     paddingBottom: 100,
   },
 });

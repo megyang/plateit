@@ -22,7 +22,7 @@ export default function TabLayout() {
       screenOptions={({ route }) => ({
         tabBarStyle: {
           backgroundColor: '#6AA84F',
-          height: 60,
+          height: 50,
         },
         tabBarShowLabel: false,
         tabBarIcon: ({ color, size }) => {

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import FlipCard from './FlipCard';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Post = {
   username: string;
@@ -26,7 +27,25 @@ export default function PostCard({ post }: { post: Post }) {
       setLikes(prev => prev + 1);
     }
   };
-    
+
+  const toggleSavePost = async (post: Post) => {
+    try {
+      const existingPosts = await AsyncStorage.getItem('savedPosts');
+      let savedPosts = existingPosts ? JSON.parse(existingPosts) : [];
+  
+      if (saved) {
+        savedPosts = savedPosts.filter((p: Post) => p.caption !== post.caption);
+      } else {
+        if (!savedPosts.some((p: Post) => p.caption === post.caption)) {
+          savedPosts.push(post);
+        }
+      }
+      await AsyncStorage.setItem('savedPosts', JSON.stringify(savedPosts));
+    } catch (error) {
+      console.error('Error updating saved posts:', error);
+    }
+  };  
+  
   return (
     <View style={styles.card}>
       {/* Header */}
@@ -91,7 +110,7 @@ export default function PostCard({ post }: { post: Post }) {
             <Ionicons
               name={liked ? 'heart' : 'heart-outline'}
               size={22}
-              color={liked ? 'red' : 'black'}
+              color={liked ? '#e5472f' : 'black'}
               style={styles.icon}
             />
           </TouchableOpacity>
@@ -103,19 +122,21 @@ export default function PostCard({ post }: { post: Post }) {
         </View>
 
         <TouchableOpacity
-          onPress={() => {
+          onPress={async () => {
             const newSaved = !saved;
             setSaved(newSaved);
+            await toggleSavePost(post);
 
             if (newSaved) {
               setShowSavedPopup(true);
-              setTimeout(() => setShowSavedPopup(false), 2000);
+              setTimeout(() => setShowSavedPopup(false), 3000);
             }
           }}
         >
           <Ionicons
-            name={saved ? 'bookmark' : 'bookmark-outline'}
+            name={saved ? 'folder' : 'folder-outline'}
             size={22}
+            color={saved ? '#9F5549' : 'black'}
           />
         </TouchableOpacity>
       </View>
@@ -131,7 +152,7 @@ export default function PostCard({ post }: { post: Post }) {
 const styles = StyleSheet.create({
   savedPopup: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 20,
     left: 0,
     right: 0,
     backgroundColor: '#E0DCC5',
@@ -157,7 +178,6 @@ const styles = StyleSheet.create({
   },
   
   savedText: {
-    fontWeight: 'bold',
     color: '#000',
     fontSize: 16,
   },
@@ -172,8 +192,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: -10,
     marginBottom: 4,
+    marginLeft: 10,
+    marginRight: 10
   },
   
   leftActions: {
@@ -189,12 +211,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginRight: 10,
   },  
+
   card: {
     position: 'relative',
     backgroundColor: '#FEFADF',
-    padding: 16,
-    marginBottom: 20,
+    padding: 0,
+    marginBottom: 30,
   },
+  
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -205,6 +229,7 @@ const styles = StyleSheet.create({
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginLeft: 10,
   },
   
   avatarCircle: {
@@ -230,25 +255,31 @@ const styles = StyleSheet.create({
   time: {
     fontSize: 12,
     color: '#666',
+    marginRight: 10
   },  
+
   image: {
     width: '100%',
-    height: 200,
-    marginBottom: 8,
+    height: 350,
+    marginBottom: 0,
   },
+
   recipe: {
     width: '100%',
-    height: 200,
+    height: 350,
     backgroundColor: '#B6D7A8',
-    justifyContent: 'center',
     paddingHorizontal: 8,
     paddingVertical: 12,
   },
-    caption: {
+
+  caption: {
     marginTop: 4,
+    marginLeft: 10
   },
+
   title: {
     fontWeight: 'bold',
     marginTop: 8,
+    marginBottom: 5
   },
 });

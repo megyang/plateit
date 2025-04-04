@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { router } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 
 type Post = {
   username: string;
@@ -20,18 +21,20 @@ export default function SavedScreen() {
   const [searchText, setSearchText] = useState('');
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
-  useEffect(() => {
-    const fetchSavedPosts = async () => {
-      const data = await AsyncStorage.getItem('savedPosts');
-      if (data) {
-        const parsedData = JSON.parse(data);
-        setSavedPosts(parsedData);
-        setFilteredPosts(parsedData);
-      }
-    };
-
-    fetchSavedPosts();
-  });
+  useFocusEffect(
+    useCallback(() => {    
+      const fetchSavedPosts = async () => {
+        const data = await AsyncStorage.getItem('savedPosts');
+        if (data) {
+          const parsedData = JSON.parse(data);
+          setSavedPosts(parsedData);
+          setFilteredPosts(parsedData);
+        }
+      };
+  
+      fetchSavedPosts();
+    }, [])
+  );
 
   const removeSavedPost = async (caption: string) => {
     try {
@@ -55,6 +58,15 @@ export default function SavedScreen() {
     }
   };
 
+  const goToRecipe = async (post: Post) => {
+    try {
+      await AsyncStorage.setItem('clickedPost', JSON.stringify(post));
+      router.push('/recipe');
+    } catch (error) {
+      console.error('Error fetching recipe:', error);
+    }
+  };
+
   return (
     <View style={styles.background}>
       <View style={styles.container}>
@@ -70,13 +82,13 @@ export default function SavedScreen() {
         <Text style={styles.noPosts}>No matches found</Text>
       ) : (
         <FlatList
-          data={savedPosts}
+          data={filteredPosts}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity
-              // onPress={() => {
-              //   router.push('/recipe');
-              // }}
+              onPress={() => {
+                goToRecipe(item);
+              }}
             >
               <View style={styles.card}>
                 <View style={styles.contentContainer}>
@@ -88,6 +100,7 @@ export default function SavedScreen() {
                       <AntDesign name="right" size={24} color="black" marginLeft={10} />
                     </TouchableOpacity>
                   </View>
+                  {/* For deleting a post from the collection screen, if we ever want that: */}
                   {/* <TouchableOpacity onPress={() => removeSavedPost(item.caption)} style={styles.unsaveButton}>
                     <Ionicons name="trash-outline" size={24} color="red" />
                   </TouchableOpacity> */}

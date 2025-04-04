@@ -33,6 +33,7 @@ export default function TabLayout() {
           else if (route.name === 'post') iconName = 'add-circle';
           else if (route.name === 'saved') iconName = 'folder';
           else if (route.name === 'profile') iconName = 'person';
+          else if (route.name === 'recipe') iconName = 'book';
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },

@@ -48,7 +48,6 @@ export default function PostCard({ post }: { post: Post }) {
   
   return (
     <View style={styles.card}>
-      {/* Header */}
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <View style={styles.avatarCircle}>
@@ -141,7 +140,6 @@ export default function PostCard({ post }: { post: Post }) {
         </TouchableOpacity>
       </View>
 
-      {/* Caption */}
       <Text style={styles.caption}>
         <Text style={styles.username}>{post.username}</Text> {post.caption}
       </Text>
@@ -233,7 +231,7 @@ const styles = StyleSheet.create({
   },
   
   avatarCircle: {
-    backgroundColor: '#8DA86E',
+    backgroundColor: '#6aa84fff',
     borderRadius: 50,
     width: 36,
     height: 36,

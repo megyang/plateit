@@ -29,6 +29,15 @@ const samplePosts = [
     ingredients: ['Spaghetti', 'Garlic', 'Butter'],
     directions: ['Boil pasta', 'Sauté garlic in butter', 'Combine and serve'],
   },
+  {
+    username: 'yinqi',
+    time: 'Yesterday at 10:08AM',
+    avatar: '',
+    image: require('../../assets/images/pancake-breakfast.jpg'),
+    caption: 'pancake breakfast :)',
+    ingredients: [],
+    directions: [],
+  },
 ];
 
 export default function HomeFeed() {

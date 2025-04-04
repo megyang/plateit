@@ -4,11 +4,56 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
+import axios from 'axios';
+
+const generateRecipe = async (caption: string) => {
+    console.log(process.env.EXPO_PUBLIC_OPENAI_API_KEY);
+  try {
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert chef that generates simple and delicious recipes."
+          },
+          {
+            role: "user",
+            content: `Generate a recipe for "${caption}". 
+            Provide a list of ingredients and step-by-step directions in JSON format with two keys: ingredients (array) and directions (array).
+            Remember to format your response correctly so that there are no JSON Parse errors.
+            `
+          }
+        ],
+        temperature: 0.7,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.EXPO_PUBLIC_OPENAI_API_KEY}`,
+        //   'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        }
+      }
+    );
+
+    const recipeData = response.data.choices[0].message.content;
+
+    console.log(recipeData);
+
+    return JSON.parse(recipeData); // Should return { ingredients: [...], directions: [...] }
+  } catch (error) {
+    console.error("Error generating recipe:", error);
+    return { ingredients: [], directions: [] };
+  }
+};
 
 export default function RecipeScreen() {
   const [recipe, setRecipe] = useState<any>(null);
   const [ingredients, setIngredients] = useState([]);
   const [directions, setDirections] = useState([]);
+  const [generatePrompt, setGeneratePrompt] = useState('Not the recipe you\'re looking for? AI-generate a new one instead!');
 
   useFocusEffect(
     useCallback(() => {
@@ -17,6 +62,13 @@ export default function RecipeScreen() {
           const data = await AsyncStorage.getItem('clickedPost');
           if (data) {
             const parsedData = JSON.parse(data);
+
+            if (!parsedData.ingredients.length || !parsedData.directions.length) {
+                setGeneratePrompt("It looks like the recipe for this dish is either incomplete or missing. AI-generate one instead?");
+            } else {
+                setGeneratePrompt('Not the recipe you\'re looking for? AI-generate a new one instead!');
+            }
+
             setRecipe(parsedData);
             setIngredients(parsedData.ingredients || []);
             setDirections(parsedData.directions || []);
@@ -33,6 +85,27 @@ export default function RecipeScreen() {
   const handleClear = () => {
     setIngredients([]);
     setDirections([]);
+  };
+
+  const handleGenerate = async () => {
+    try {
+        const data = await AsyncStorage.getItem('clickedPost');
+        if (data) {
+          const parsedData = JSON.parse(data);
+
+          console.log("Generating missing recipe details...");
+          const aiGenerated = await generateRecipe(parsedData.caption);
+          parsedData.ingredients = aiGenerated.ingredients;
+          parsedData.directions = aiGenerated.directions;
+
+          setRecipe(parsedData);
+          setIngredients(parsedData.ingredients || []);
+          setDirections(parsedData.directions || []);
+          setGeneratePrompt("Not the recipe you\'re looking for? AI-generate a new one instead!");
+        }
+      } catch (error) {
+        console.error('Error fetching saved recipe:', error);
+      }
   };
 
   return (
@@ -58,6 +131,17 @@ export default function RecipeScreen() {
                 </View>
             </TouchableOpacity>
         </View>
+       
+        <View style={styles.generatePrompt}>
+            <Text style={styles.promptText}>{generatePrompt}</Text>
+            <TouchableOpacity
+                onPress={handleGenerate}
+                style={styles.generateButton}
+            >
+                <Text style={styles.generateButtonText}>Generate</Text>
+            </TouchableOpacity>
+        </View>
+
         <View style={styles.recipeText}>
             <Text style={styles.ingredientHeader}>Ingredients</Text>
             {ingredients?.map((item:any, idx:any) => (
@@ -76,6 +160,7 @@ const styles = StyleSheet.create({
   background: {
     backgroundColor: '#FEFADF',
     height: "100%",
+    alignItems: "center",
   },
   container: {
     backgroundColor: '#FEFADF',
@@ -133,5 +218,30 @@ const styles = StyleSheet.create({
   },
   recipeStep: {
     marginTop: 5
+  },
+  generatePrompt: {
+    backgroundColor: "#E0DCC5",
+    width: "90%",
+    borderRadius: 20,
+    padding: 10,
+    marginTop: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  promptText: {
+    textAlign: 'center',
+    marginBottom: 10,
+    fontSize: 13,
+    fontStyle: "italic"
+  },
+  generateButton: {
+    backgroundColor: '#A4C18B',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+  },
+  generateButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   }
 })

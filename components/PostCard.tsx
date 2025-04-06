@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import FlipCard from './FlipCard';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 type Post = {
   username: string;
@@ -64,7 +65,10 @@ export default function PostCard({ post }: { post: Post }) {
         <FlipCard
           onDoubleTap={handleDoubleTap}
           front={
-            <Image source={post.image} style={styles.image} resizeMode="cover" />
+            <View style={styles.imageContainer}>
+              <Image source={post.image} style={styles.image} resizeMode="cover" />
+              <AntDesign name="retweet" size={28} style={styles.retweetIcon}/>
+            </View>
           }
           back={
             <View style={styles.recipe}>
@@ -76,6 +80,7 @@ export default function PostCard({ post }: { post: Post }) {
               {post.directions.map((step, idx) => (
                 <Text key={idx}>{idx + 1}. {step}</Text>
               ))}
+              <AntDesign name="retweet" size={30} style={styles.retweetIcon}/>
             </View>
           }
         />
@@ -260,6 +265,24 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 350,
     marginBottom: 0,
+  },
+
+  imageContainer: {
+    position: 'relative',
+    width: '100%',
+    height: "auto",
+  },
+
+  retweetIcon: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    color: "white", 
+    padding: 4,
+    borderRadius: 12,
+    textShadowColor: 'white',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
   },
 
   recipe: {

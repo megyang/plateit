@@ -22,7 +22,7 @@ const generateRecipe = async (caption: string) => {
             role: "user",
             content: `Generate a recipe for "${caption}". 
             Provide a list of ingredients and step-by-step directions in JSON format with two keys: ingredients (array) and directions (array).
-            Remember to format your response correctly so that there are no JSON Parse errors.
+            Remember to format your response correctly so that there are no JSON Parse errors. There should be no trailing apostrophes!
             `
           }
         ],
@@ -205,7 +205,9 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 8,
     paddingVertical: 12,
-    paddingLeft: 20
+    paddingLeft: 20,
+    // overflow: "scroll"
+    flex: 1
   },
   ingredientHeader: {
     fontSize: 20,

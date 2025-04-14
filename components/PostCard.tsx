@@ -321,16 +321,22 @@ const styles = StyleSheet.create({
   },
 
   saveButton: {
-    marginTop: 40,
-    backgroundColor: "white",
-    width: 60,
-    borderRadius: 20,
-    padding: 7,
-    marginLeft: "40%"
+    marginTop: 60,
+    backgroundColor: '#fff',
+    paddingVertical: 6,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    alignSelf: 'center',
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
   },
 
   saveText: {
-    fontWeight: "bold",
-    fontSize: 18,
-  }
+    // fontWeight: "bold",
+    // fontSize: 18,
+    fontWeight: '600',
+    fontSize: 16,
+    color: '#333',
+  },
 });

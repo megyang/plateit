@@ -80,6 +80,22 @@ export default function PostCard({ post }: { post: Post }) {
               {post.directions.map((step, idx) => (
                 <Text key={idx}>{idx + 1}. {step}</Text>
               ))}
+              <TouchableOpacity
+                onPress={async () => {
+                  const newSaved = !saved;
+                  setSaved(newSaved);
+                  await toggleSavePost(post);
+
+                  if (newSaved) {
+                    setShowSavedPopup(true);
+                    setTimeout(() => setShowSavedPopup(false), 3000);
+                  }
+                }}
+              >
+                <View style={styles.saveButton}>
+                  <Text style={styles.saveText}>Save</Text>
+                </View>
+              </TouchableOpacity>
               <AntDesign name="retweet" size={30} style={styles.retweetIcon}/>
             </View>
           }
@@ -303,4 +319,18 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 5
   },
+
+  saveButton: {
+    marginTop: 40,
+    backgroundColor: "white",
+    width: 60,
+    borderRadius: 20,
+    padding: 7,
+    marginLeft: "40%"
+  },
+
+  saveText: {
+    fontWeight: "bold",
+    fontSize: 18,
+  }
 });

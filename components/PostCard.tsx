@@ -84,16 +84,18 @@ export default function PostCard({ post }: { post: Post }) {
             </View>
           }
           back={
-            <View style={styles.recipe}>
-              {/* <Image source={require('../assets/images/book_page.jpg')} style={styles.image} resizeMode="cover" /> */}
-              <Text style={styles.title}>Ingredients</Text>
-              {post.ingredients.map((item, idx) => (
-                <Text key={idx}>• {item}</Text>
-              ))}
-              <Text style={styles.title}>Directions</Text>
-              {post.directions.map((step, idx) => (
-                <Text key={idx}>{idx + 1}. {step}</Text>
-              ))}
+            <View style={styles.imageContainer}>
+              <Image source={require('../assets/images/book_page.jpg')} style={styles.image} resizeMode="cover" />
+              <View style={styles.recipe}>  
+                <Text style={styles.title}>Ingredients</Text>
+                {post.ingredients.map((item, idx) => (
+                  <Text key={idx}>• {item}</Text>
+                ))}
+                <Text style={styles.title}>Directions</Text>
+                {post.directions.map((step, idx) => (
+                  <Text key={idx}>{idx + 1}. {step}</Text>
+                ))}
+              </View>  
               <AntDesign name="retweet" size={30} style={styles.retweetIcon}/>
             </View>
           }
@@ -362,11 +364,9 @@ const styles = StyleSheet.create({
   },
 
   recipe: {
-    width: '100%',
-    height: 350,
-    backgroundColor: '#B6D7A8',
-    paddingHorizontal: 8,
-    paddingVertical: 12,
+    position: "absolute",
+    marginLeft: 20,
+    marginTop: 20,
   },
 
   rating: {

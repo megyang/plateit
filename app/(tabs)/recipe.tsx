@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { router } from 'expo-router';
@@ -53,6 +53,7 @@ export default function RecipeScreen() {
   const [recipe, setRecipe] = useState<any>(null);
   const [ingredients, setIngredients] = useState([]);
   const [directions, setDirections] = useState([]);
+  const [recipeImage, setRecipeImage] = useState<any>(null);
   const [generatePrompt, setGeneratePrompt] = useState('Not the recipe you\'re looking for? AI-generate a new one instead!');
 
   useFocusEffect(
@@ -72,6 +73,7 @@ export default function RecipeScreen() {
             setRecipe(parsedData);
             setIngredients(parsedData.ingredients || []);
             setDirections(parsedData.directions || []);
+            setRecipeImage(parsedData.image || null);
           }
         } catch (error) {
           console.error('Error fetching saved recipe:', error);
@@ -94,7 +96,7 @@ export default function RecipeScreen() {
           const parsedData = JSON.parse(data);
 
           console.log("Generating missing recipe details...");
-          const aiGenerated = await generateRecipe(parsedData.caption);
+          const aiGenerated = await generateRecipe(parsedData.recipeName);
           parsedData.ingredients = aiGenerated.ingredients;
           parsedData.directions = aiGenerated.directions;
 
@@ -120,7 +122,7 @@ export default function RecipeScreen() {
             </TouchableOpacity>
 
             <View style={styles.captionWrapper}>
-                <Text style={styles.title} numberOfLines={2}>{recipe ? recipe.caption : ''}</Text>
+                <Text style={styles.title} numberOfLines={2}>{recipe ? recipe.recipeName : ''}</Text>
             </View>
             
             <TouchableOpacity
@@ -131,6 +133,7 @@ export default function RecipeScreen() {
                 </View>
             </TouchableOpacity>
         </View>
+        <Image source={recipeImage} style={styles.image} />
        
         <View style={styles.generatePrompt}>
             <Text style={styles.promptText}>{generatePrompt}</Text>
@@ -142,7 +145,7 @@ export default function RecipeScreen() {
             </TouchableOpacity>
         </View>
 
-        <View style={styles.recipeText}>
+        <ScrollView style={styles.recipeText}>
             <Text style={styles.ingredientHeader}>Ingredients</Text>
             {ingredients?.map((item:any, idx:any) => (
             <Text key={idx} style={styles.recipeStep}>• {item}</Text>
@@ -151,7 +154,7 @@ export default function RecipeScreen() {
             {directions?.map((step:any, idx:any) => (
             <Text key={idx} style={styles.recipeStep}>{idx + 1}. {step}</Text>
             ))}
-        </View>
+        </ScrollView>
     </View>
   );
 }
@@ -185,6 +188,11 @@ const styles = StyleSheet.create({
     flex: 1, 
     flexShrink: 1,
   },
+  image: {
+    marginTop: 10,
+    height: 150,
+    width: 150
+  },
   clearView: {
     borderStyle: "solid",
     borderColor: "#A4C18B",
@@ -206,8 +214,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 12,
     paddingLeft: 20,
-    // overflow: "scroll"
-    flex: 1
+    flex: 1,
+    marginBottom: 10
   },
   ingredientHeader: {
     fontSize: 20,

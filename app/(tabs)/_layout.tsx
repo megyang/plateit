@@ -30,7 +30,7 @@ export default function TabLayout() {
           let iconName: any;
 
           if (route.name === 'index') iconName = 'home';
-          else if (route.name === 'explore') iconName = 'search';
+          // else if (route.name === 'explore') iconName = 'search';
           else if (route.name === 'post') iconName = 'add-circle';
           else if (route.name === 'saved') iconName = 'heart';
           else if (route.name === 'profile') iconName = 'person';
@@ -39,7 +39,7 @@ export default function TabLayout() {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
 
-        tabBarActiveTintColor: colors.accentColor,
+        tabBarActiveTintColor: colors.lightSecondary,
         tabBarInactiveTintColor: colors.lightPrimary,
         headerShown: false,
       })}

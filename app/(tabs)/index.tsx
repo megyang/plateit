@@ -1,4 +1,5 @@
-import { ScrollView, View, SafeAreaView, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, View, SafeAreaView, StyleSheet, TextInput } from 'react-native';
 import PostCard from '../../components/PostCard';
 import Header from '../../components/Header';
 import { colors } from '@/constants/Colors';
@@ -45,10 +46,26 @@ const samplePosts = [
 ];
 
 export default function HomeFeed() {
+  const handleSearch = (text: string) => {
+    setSearchText(text);
+    if (text === '') {
+    } else {
+      
+    }
+  };
+
+  const [searchText, setSearchText] = useState('');
+  
   return (
     <SafeAreaView style={styles.safe}>
       <Header />
       <ScrollView contentContainerStyle={styles.container}>
+      <TextInput
+          style={styles.searchBar}
+          placeholder= "Search Feed"
+          value={searchText}
+          onChangeText={handleSearch}
+        />
         {samplePosts.map((post, idx) => (
           <PostCard key={idx} post={post} />
         ))}
@@ -62,9 +79,20 @@ const styles = StyleSheet.create({
     flex: 1, 
     backgroundColor: colors.lightPrimary, 
   },
-
   container: {
     padding: 0,
     paddingBottom: 100,
+  },
+  searchBar: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 15,
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
 });

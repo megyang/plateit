@@ -28,6 +28,7 @@ export const Colors = {
 
 export const colors = {
   lightPrimary: '#F3EFE3',
+  lightSecondary: '#d9c08eff',
   darkPrimary: '#72492C',
   accentColor: '#D4AF37',
 };

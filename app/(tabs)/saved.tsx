@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
+import { colors } from '@/constants/Colors';
 
 type Post = {
   username: string;
@@ -41,6 +42,7 @@ export default function SavedScreen() {
     try {
       const updatedPosts = savedPosts.filter(post => post.recipeName !== name);
       setSavedPosts(updatedPosts);
+      setFilteredPosts(updatedPosts);
       await AsyncStorage.setItem('savedPosts', JSON.stringify(updatedPosts));
     } catch (error) {
       console.error('Error removing saved post:', error);
@@ -93,18 +95,17 @@ export default function SavedScreen() {
             >
               <View style={styles.card}>
                 <View style={styles.contentContainer}>
+                  <TouchableOpacity onPress={() => removeSavedPost(item.recipeName)} style={styles.unsaveButton}>
+                    <Ionicons name="trash-outline" size={20} color="#ac3030ff" />
+                  </TouchableOpacity>
                   <Text style={styles.caption}>{item.recipeName}</Text>
                   
                   <View style={styles.imageContainer}>
-                    <Image source={item.image} style={styles.image} />
                     <TouchableOpacity>
                       <AntDesign name="right" size={24} color="black" marginLeft={10} />
                     </TouchableOpacity>
                   </View>
-                  {/* For deleting a post from the collection screen, if we ever want that: */}
-                  {/* <TouchableOpacity onPress={() => removeSavedPost(item.caption)} style={styles.unsaveButton}>
-                    <Ionicons name="trash-outline" size={24} color="red" />
-                  </TouchableOpacity> */}
+                  
                 </View>
               </View>
             </TouchableOpacity>
@@ -117,11 +118,11 @@ export default function SavedScreen() {
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: '#FEFADF',
+    backgroundColor: colors.lightPrimary,
     height: "100%",
   },
   container: {
-    backgroundColor: '#FEFADF',
+    backgroundColor: colors.lightPrimary,
     padding: 10,
   },
   title: {
@@ -150,8 +151,8 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   card: {
-    backgroundColor: '#B6D7A8',
-    padding: 10,
+    backgroundColor: colors.lightSecondary,
+    padding: 15,
     marginTop: 10,
     marginLeft: 10,
     marginRight: 10,
@@ -181,8 +182,6 @@ const styles = StyleSheet.create({
 
   },
   unsaveButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
+   
   },
 });

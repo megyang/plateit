@@ -22,12 +22,19 @@ export default function PostCard({ post }: { post: Post }) {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [likeText, setLikeText] = useState("Liked by 27 others");
+  const [rated, setRated] = useState(false);
   const [showSavedPopup, setShowSavedPopup] = useState(false);
 
   const handleDoubleTap = () => {
     if (!liked) {
       setLiked(true);
       setLikeText("Liked by you and 27 others");
+    }
+  };
+
+  const handleRate = () => {
+    if (!rated) {
+      setRated(true);
     }
   };
 
@@ -71,8 +78,6 @@ export default function PostCard({ post }: { post: Post }) {
           </View>
         </View>
       </View>
-
-      {/* ONLY the image flips */}
 
       <View style={{ position: 'relative' }}>
         <FlipCard
@@ -139,6 +144,7 @@ export default function PostCard({ post }: { post: Post }) {
       <View style={styles.actionsRow}>
         <View style={styles.saveContainer}>
           <TouchableOpacity
+            style={styles.actionButton}
             onPress={async () => {
               const newSaved = !saved;
               setSaved(newSaved);
@@ -150,25 +156,36 @@ export default function PostCard({ post }: { post: Post }) {
               }
             }}
           >
-            <Text>Save</Text>
+            <Text style={{ fontSize: 18, marginRight: 3 }}>Save</Text>
             <Ionicons
               name={saved ? 'heart' : 'heart-outline'}
-              size={22}
+              size={25}
               color={saved ? '#e5472f' : colors.darkPrimary}
-              // style={styles.icon}
             />
           </TouchableOpacity>
         </View>
         <View style={styles.rateContainer}>
-          <TouchableOpacity>
-            <Text>Rate</Text>
-            <AntDesign name="star" size={17} color="black" style={styles.starIcon} />
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={async () => {
+              setRated(true);
+              // handle rating popup here
+            }}
+          >
+            <Text style={{ fontSize: 18, marginRight: 3 }}>Rate</Text>
+            <AntDesign 
+              name={rated ? "star" : "staro"}
+              size={25}
+              color={rated ? colors.accentColor : colors.darkPrimary}
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.discussionContainer}>
-          <TouchableOpacity>
-            <Text>View Discussion</Text>
-            <Ionicons name="chatbubble-outline" size={22} style={styles.discussionIcon} />
+          <TouchableOpacity
+            style={styles.actionButton}
+          >
+            <Text style={{ fontSize: 18, marginRight: 3 }}>View Discussion</Text>
+            <Ionicons name="chatbubble-outline" size={23} style={styles.discussionIcon} />
           </TouchableOpacity>
         </View>
       </View>
@@ -283,7 +300,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 10,
     marginRight: 10,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
+    paddingVertical: 5
   },
   
   saveContainer: {
@@ -292,11 +310,18 @@ const styles = StyleSheet.create({
   },
 
   rateContainer: {
-
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 
   discussionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   
   discussionIcon: {
@@ -377,23 +402,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 8,
     marginBottom: 5
-  },
-
-  saveButton: {
-    marginTop: 60,
-    backgroundColor: '#fff',
-    paddingVertical: 6,
-    paddingHorizontal: 20,
-    borderRadius: 15,
-    alignSelf: 'center',
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 3,
-  },
-
-  saveText: {
-    fontWeight: '600',
-    fontSize: 16,
-    color: '#333',
   },
 });

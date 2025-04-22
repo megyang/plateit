@@ -11,7 +11,8 @@ type Post = {
   time: string;
   avatar: string;
   image: any;
-  caption: string;
+  recipeName: string;
+  recipeTime: string;
   ingredients: string[];
   directions: string[];
 };
@@ -36,9 +37,9 @@ export default function SavedScreen() {
     }, [])
   );
 
-  const removeSavedPost = async (caption: string) => {
+  const removeSavedPost = async (name: string) => {
     try {
-      const updatedPosts = savedPosts.filter(post => post.caption !== caption);
+      const updatedPosts = savedPosts.filter(post => post.recipeName !== name);
       setSavedPosts(updatedPosts);
       await AsyncStorage.setItem('savedPosts', JSON.stringify(updatedPosts));
     } catch (error) {
@@ -52,7 +53,7 @@ export default function SavedScreen() {
       setFilteredPosts(savedPosts);
     } else {
       const filtered = savedPosts.filter(post =>
-        post.caption.toLowerCase().includes(text.toLowerCase())
+        post.recipeName.toLowerCase().includes(text.toLowerCase())
       );
       setFilteredPosts(filtered);
     }
@@ -92,7 +93,7 @@ export default function SavedScreen() {
             >
               <View style={styles.card}>
                 <View style={styles.contentContainer}>
-                  <Text style={styles.caption}>{item.caption}</Text>
+                  <Text style={styles.caption}>{item.recipeName}</Text>
                   
                   <View style={styles.imageContainer}>
                     <Image source={item.image} style={styles.image} />

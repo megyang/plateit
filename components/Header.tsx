@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { colors } from '@/constants/Colors';
 
 export default function Header() {
   return (
@@ -11,12 +12,13 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FEFADF',
+    backgroundColor: colors.lightPrimary,
     paddingTop: 10,
     alignItems: 'center',
+    marginBottom: 10
   },
   title: {
     fontFamily: 'Cakecafe',
-    fontSize: 28,
+    fontSize: 26,
   },
 });

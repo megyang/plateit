@@ -1,14 +1,16 @@
 import { ScrollView, View, SafeAreaView, StyleSheet } from 'react-native';
 import PostCard from '../../components/PostCard';
 import Header from '../../components/Header';
+import { colors } from '@/constants/Colors';
 
 const samplePosts = [
   {
-    username: 'cindy',
+    username: 'cindy_yang',
     time: 'Today at 8:34PM',
     avatar: '',
     image: require('../../assets/images/cheesecake.jpg'),
-    caption: 'blueberry cheesecake!',
+    recipeName: 'Blueberry Cheesecake',
+    recipeTime: '1hr 45min',
     ingredients: [
       '1 cup graham cracker crumbs',
       '¾ cup melted butter',
@@ -21,11 +23,12 @@ const samplePosts = [
     ],
   },
   {
-    username: 'megan',
+    username: 'megan.pdf',
     time: 'Yesterday at 1:51PM',
     avatar: '',
     image: require('../../assets/images/spaghetti.jpg'),
-    caption: 'spaghetti with garlic butter 🍝',
+    recipeName: 'Spaghetti with Garlic Butter',
+    recipeTime: '40min',
     ingredients: ['Spaghetti', 'Garlic', 'Butter'],
     directions: ['Boil pasta', 'Sauté garlic in butter', 'Combine and serve'],
   },
@@ -34,7 +37,8 @@ const samplePosts = [
     time: 'Yesterday at 10:08AM',
     avatar: '',
     image: require('../../assets/images/pancake-breakfast.jpg'),
-    caption: 'pancake breakfast :)',
+    recipeName: 'Pancake Breakfast',
+    recipeTime: '1hr 10min',
     ingredients: [],
     directions: [],
   },
@@ -56,7 +60,7 @@ export default function HomeFeed() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1, 
-    backgroundColor: '#FEFADF', 
+    backgroundColor: colors.lightPrimary, 
   },
 
   container: {

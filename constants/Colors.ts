@@ -27,8 +27,7 @@ export const Colors = {
 
 
 export const colors = {
-  background: '#F9F5E3',
-  tabBar: '#8DA86E',
-  textPrimary: '#333',
-  mutedText: '#666',
+  lightPrimary: '#F3EFE3',
+  darkPrimary: '#72492C',
+  accentColor: '#D4AF37',
 };

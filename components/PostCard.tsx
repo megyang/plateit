@@ -5,13 +5,15 @@ import FlipCard from './FlipCard';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { colors } from '@/constants/Colors';
 
 type Post = {
   username: string;
   time: string;
   avatar: string;
   image: any;
-  caption: string;
+  recipeName: string;
+  recipeTime: string;
   ingredients: string[];
   directions: string[];
 };
@@ -19,13 +21,13 @@ type Post = {
 export default function PostCard({ post }: { post: Post }) {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [likes, setLikes] = useState(27);
+  const [likeText, setLikeText] = useState("Liked by 27 others");
   const [showSavedPopup, setShowSavedPopup] = useState(false);
 
   const handleDoubleTap = () => {
     if (!liked) {
       setLiked(true);
-      setLikes(prev => prev + 1);
+      setLikeText("Liked by you and 27 others");
     }
   };
 
@@ -35,9 +37,9 @@ export default function PostCard({ post }: { post: Post }) {
       let savedPosts = existingPosts ? JSON.parse(existingPosts) : [];
   
       if (saved) {
-        savedPosts = savedPosts.filter((p: Post) => p.caption !== post.caption);
+        savedPosts = savedPosts.filter((p: Post) => p.recipeName !== post.recipeName);
       } else {
-        if (!savedPosts.some((p: Post) => p.caption === post.caption)) {
+        if (!savedPosts.some((p: Post) => p.recipeName === post.recipeName)) {
           savedPosts.push(post);
         }
       }
@@ -50,13 +52,24 @@ export default function PostCard({ post }: { post: Post }) {
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <View style={styles.userInfo}>
-          <View style={styles.avatarCircle}>
-            <Text style={styles.avatarText}>{post.username.slice(0, 2).toUpperCase()}</Text>
+        <View style={styles.topRow}>
+          <Text style={styles.recipeName}>{post.recipeName}</Text>
+          <View style={styles.rating}>
+            <Text style={styles.ratingNumber}>4.9</Text>
+            <AntDesign name="star" size={17} color="black" style={styles.starIcon} />
+            <Text style={styles.ratingText}>(24)</Text>
           </View>
-          <Text style={styles.username}>{post.username}</Text>
         </View>
-        <Text style={styles.time}>{post.time}</Text>
+
+        <View style={styles.bottomRow}>
+          <Text>
+            By <Text style={styles.username}>{post.username}</Text>
+          </Text>
+          <View style={styles.timeContainer}>
+            <AntDesign name="clockcircle" size={16} style={styles.clockIcon} />
+            <Text style={styles.timeText}>{post.recipeTime}</Text>
+          </View>
+        </View>
       </View>
 
       {/* ONLY the image flips */}
@@ -71,15 +84,18 @@ export default function PostCard({ post }: { post: Post }) {
             </View>
           }
           back={
-            <View style={styles.recipe}>
-              <Text style={styles.title}>Ingredients</Text>
-              {post.ingredients.map((item, idx) => (
-                <Text key={idx}>• {item}</Text>
-              ))}
-              <Text style={styles.title}>Directions</Text>
-              {post.directions.map((step, idx) => (
-                <Text key={idx}>{idx + 1}. {step}</Text>
-              ))}
+            <View style={styles.imageContainer}>
+              <Image source={require('../assets/images/book_page.jpg')} style={styles.image} resizeMode="cover" />
+              <View style={styles.recipe}>  
+                <Text style={styles.title}>Ingredients</Text>
+                {post.ingredients.map((item, idx) => (
+                  <Text key={idx}>• {item}</Text>
+                ))}
+                <Text style={styles.title}>Directions</Text>
+                {post.directions.map((step, idx) => (
+                  <Text key={idx}>{idx + 1}. {step}</Text>
+                ))}
+              </View>  
               <AntDesign name="retweet" size={30} style={styles.retweetIcon}/>
             </View>
           }
@@ -103,56 +119,113 @@ export default function PostCard({ post }: { post: Post }) {
         )}
       </View>
 
-      <View style={styles.actionsRow}>
-        <View style={styles.leftActions}>
+      <View style={styles.footer}>
+        <View style={styles.likeContainer}>
           <TouchableOpacity
             onPress={() => {
               setLiked(!liked);
-              setLikes(prev => liked ? prev - 1 : prev + 1);
+              setLikeText(prev => liked ? "Liked by 27 others" : "Liked by you and 27 others");
             }}
           >
-            <Ionicons
-              name={liked ? 'heart' : 'heart-outline'}
-              size={22}
-              color={liked ? '#e5472f' : 'black'}
-              style={styles.icon}
-            />
+            <AntDesign name={liked ? 'like1' : 'like2'} size={20} style={styles.likeIcon} />
           </TouchableOpacity>
-          <Text style={styles.likeCount}>{likes}</Text>
-
-          <TouchableOpacity>
-            <Ionicons name="chatbubble-outline" size={22} style={styles.icon} />
-          </TouchableOpacity>
+          <Text style={{ marginLeft: 5 }}>{likeText}</Text>
         </View>
-
-        <TouchableOpacity
-          onPress={async () => {
-            const newSaved = !saved;
-            setSaved(newSaved);
-            await toggleSavePost(post);
-
-            if (newSaved) {
-              setShowSavedPopup(true);
-              setTimeout(() => setShowSavedPopup(false), 3000);
-            }
-          }}
-        >
-          <Ionicons
-            name={saved ? 'folder' : 'folder-outline'}
-            size={22}
-            color={saved ? '#9F5549' : 'black'}
-          />
-        </TouchableOpacity>
+        <View>
+          <Text style={styles.time}>{post.time}</Text>
+        </View>
       </View>
 
-      <Text style={styles.caption}>
-        <Text style={styles.username}>{post.username}</Text> {post.caption}
-      </Text>
+      <View style={styles.actionsRow}>
+        <View style={styles.saveContainer}>
+          <TouchableOpacity
+            onPress={async () => {
+              const newSaved = !saved;
+              setSaved(newSaved);
+              await toggleSavePost(post);
+
+              if (newSaved) {
+                setShowSavedPopup(true);
+                setTimeout(() => setShowSavedPopup(false), 3000);
+              }
+            }}
+          >
+            <Text>Save</Text>
+            <Ionicons
+              name={saved ? 'heart' : 'heart-outline'}
+              size={22}
+              color={saved ? '#e5472f' : colors.darkPrimary}
+              // style={styles.icon}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.rateContainer}>
+          <TouchableOpacity>
+            <Text>Rate</Text>
+            <AntDesign name="star" size={17} color="black" style={styles.starIcon} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.discussionContainer}>
+          <TouchableOpacity>
+            <Text>View Discussion</Text>
+            <Ionicons name="chatbubble-outline" size={22} style={styles.discussionIcon} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  topRow: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+
+  ratingNumber: {
+    fontSize: 16,
+    fontWeight: "bold"
+  },
+
+  ratingText: {
+    fontSize: 16,
+  },
+
+  bottomRow: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  timeText: {
+    fontSize: 14,
+    marginLeft: 5
+  },
+
+  starIcon: {
+    marginLeft: 3,
+    marginRight: 3,
+    color: colors.accentColor
+  },
+
+  clockIcon: {
+    color: colors.darkPrimary
+  },
+
+  likeIcon: {
+    color: colors.darkPrimary
+  },
+
   savedPopup: {
     position: 'absolute',
     bottom: 20,
@@ -187,67 +260,73 @@ const styles = StyleSheet.create({
   
   goText: {
     fontSize: 16,
-    color: '#55A831',
+    color: colors.darkPrimary,
     fontWeight: '500',
+  },
+
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    marginTop: -10
+  },
+
+  likeContainer: {
+    flexDirection: 'row',
   },
   
   actionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: -10,
     marginBottom: 4,
+    marginTop: 10,
     marginLeft: 10,
-    marginRight: 10
+    marginRight: 10,
+    paddingHorizontal: 10
   },
   
-  leftActions: {
+  saveContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  
-  icon: {
-    marginRight: 6,
+
+  rateContainer: {
+
+  },
+
+  discussionContainer: {
+
   },
   
-  likeCount: {
-    fontWeight: 'bold',
-    marginRight: 10,
-  },  
+  discussionIcon: {
+    marginRight: 6,
+  },
 
   card: {
     position: 'relative',
-    backgroundColor: '#FEFADF',
+    backgroundColor: colors.lightPrimary,
     padding: 0,
     marginBottom: 30,
   },
   
   header: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
+    width: '100%',
+    paddingHorizontal: 10,
   },
   
-  userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 10,
+  recipeName: {
+    fontSize: 21,
+    fontWeight: 500,
   },
-  
-  avatarCircle: {
-    backgroundColor: '#6aa84fff',
-    borderRadius: 50,
-    width: 36,
-    height: 36,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
-  },
-  
-  avatarText: {
-    color: '#fff',
-    fontWeight: 'bold',
+
+  postAuthor: {
+    width: "100%",
+    justifyContent: "space-between",
+    marginLeft: 10
   },
   
   username: {
@@ -264,7 +343,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 350,
-    marginBottom: 0,
   },
 
   imageContainer: {
@@ -286,21 +364,36 @@ const styles = StyleSheet.create({
   },
 
   recipe: {
-    width: '100%',
-    height: 350,
-    backgroundColor: '#B6D7A8',
-    paddingHorizontal: 8,
-    paddingVertical: 12,
+    position: "absolute",
+    marginLeft: 20,
+    marginTop: 20,
   },
 
-  caption: {
-    marginTop: 4,
-    marginLeft: 10
+  rating: {
+    flexDirection: "row",
   },
 
   title: {
     fontWeight: 'bold',
     marginTop: 8,
     marginBottom: 5
+  },
+
+  saveButton: {
+    marginTop: 60,
+    backgroundColor: '#fff',
+    paddingVertical: 6,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    alignSelf: 'center',
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+
+  saveText: {
+    fontWeight: '600',
+    fontSize: 16,
+    color: '#333',
   },
 });

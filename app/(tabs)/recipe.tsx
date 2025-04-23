@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback, useRef } from 'react';
+import { ScrollView, View, Text, TextInput, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
+import { colors } from '@/constants/Colors';
 
 const generateRecipe = async (caption: string) => {
-    console.log(process.env.EXPO_PUBLIC_OPENAI_API_KEY);
   try {
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
@@ -31,7 +31,6 @@ const generateRecipe = async (caption: string) => {
       {
         headers: {
           'Authorization': `Bearer ${process.env.EXPO_PUBLIC_OPENAI_API_KEY}`,
-        //   'Authorization': `Bearer ${key}`,
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache'
         }
@@ -42,7 +41,7 @@ const generateRecipe = async (caption: string) => {
 
     console.log(recipeData);
 
-    return JSON.parse(recipeData); // Should return { ingredients: [...], directions: [...] }
+    return JSON.parse(recipeData);
   } catch (error) {
     console.error("Error generating recipe:", error);
     return { ingredients: [], directions: [] };
@@ -51,10 +50,15 @@ const generateRecipe = async (caption: string) => {
 
 export default function RecipeScreen() {
   const [recipe, setRecipe] = useState<any>(null);
-  const [ingredients, setIngredients] = useState([]);
-  const [directions, setDirections] = useState([]);
+  const [ingredients, setIngredients] = useState<string[]>([]);
+  const [directions, setDirections] = useState<string[]>([]);
   const [recipeImage, setRecipeImage] = useState<any>(null);
   const [generatePrompt, setGeneratePrompt] = useState('Not the recipe you\'re looking for? AI-generate a new one instead!');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedIngredients, setEditedIngredients] = useState<string[]>([]);
+  const [editedDirections, setEditedDirections] = useState<string[]>([]);
+  const ingredientRefs = useRef<Array<any>>([]);
+  const directionRefs = useRef<Array<TextInput | null>>([]);
 
   useFocusEffect(
     useCallback(() => {
@@ -74,6 +78,9 @@ export default function RecipeScreen() {
             setIngredients(parsedData.ingredients || []);
             setDirections(parsedData.directions || []);
             setRecipeImage(parsedData.image || null);
+            setEditedIngredients(parsedData.ingredients || []);
+            setEditedDirections(parsedData.directions || []);
+
           }
         } catch (error) {
           console.error('Error fetching saved recipe:', error);
@@ -85,8 +92,10 @@ export default function RecipeScreen() {
   );
 
   const handleClear = () => {
-    setIngredients([]);
-    setDirections([]);
+    setIngredients([" "]);
+    setDirections([" "]);
+    setEditedIngredients([" "]);
+    setEditedDirections([" "]);
   };
 
   const handleGenerate = async () => {
@@ -104,6 +113,9 @@ export default function RecipeScreen() {
           setIngredients(parsedData.ingredients || []);
           setDirections(parsedData.directions || []);
           setGeneratePrompt("Not the recipe you\'re looking for? AI-generate a new one instead!");
+          setEditedIngredients(parsedData.ingredients || []);
+          setEditedDirections(parsedData.directions || []);
+
         }
       } catch (error) {
         console.error('Error fetching saved recipe:', error);
@@ -118,42 +130,170 @@ export default function RecipeScreen() {
                     router.push('/saved');
                 }}
             >
-                <AntDesign name="left" size={24} color="black" style={styles.icon} />
+              <AntDesign name="left" size={24} color="black" style={styles.icon} />
             </TouchableOpacity>
 
             <View style={styles.captionWrapper}>
-                <Text style={styles.title} numberOfLines={2}>{recipe ? recipe.recipeName : ''}</Text>
+              <Text style={styles.title} numberOfLines={2}>{recipe ? recipe.recipeName : ''}</Text>
             </View>
             
             <TouchableOpacity
                 onPress={handleClear}
             >
-                <View style={styles.clearView}>
-                    <Text style={styles.clearText}>Clear</Text>
-                </View>
+              <View style={styles.clearView}>
+                <Text style={styles.clearText}>Clear</Text>
+              </View>
             </TouchableOpacity>
         </View>
         <Image source={recipeImage} style={styles.image} />
        
         <View style={styles.generatePrompt}>
-            <Text style={styles.promptText}>{generatePrompt}</Text>
-            <TouchableOpacity
-                onPress={handleGenerate}
-                style={styles.generateButton}
-            >
-                <Text style={styles.generateButtonText}>Generate</Text>
-            </TouchableOpacity>
+          <Text style={styles.promptText}>{generatePrompt}</Text>
+          <TouchableOpacity
+            onPress={handleGenerate}
+            style={styles.generateButton}
+          >
+            <Text style={styles.generateButtonText}>Generate</Text>
+          </TouchableOpacity>
         </View>
-
+      
         <ScrollView style={styles.recipeText}>
+          <View>
             <Text style={styles.ingredientHeader}>Ingredients</Text>
-            {ingredients?.map((item:any, idx:any) => (
-            <Text key={idx} style={styles.recipeStep}>• {item}</Text>
-            ))}
+            {isEditing ? (
+              editedIngredients.map((item, idx) => (
+                <View key={idx} style={{ flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={{ marginRight: 5 }}>•</Text>
+                  <TextInput
+                    ref={(ref) => (ingredientRefs.current[idx] = ref)}
+                    style={styles.editRecipeStep}
+                    value={item}
+                    onChangeText={(text) => {
+                      if (text.endsWith('\n')) {
+                        const trimmed = text.trim();
+                        const newList = [...editedIngredients];
+                        newList[idx] = trimmed;
+                        newList.splice(idx + 1, 0, '');
+                        setEditedIngredients(newList);
+                    
+                        setTimeout(() => {
+                          if (ingredientRefs.current[idx + 1]) {
+                            ingredientRefs.current[idx + 1].focus(); 
+                          }
+                        }, 0);
+
+                      } else {
+                        const newList = [...editedIngredients];
+                        newList[idx] = text;
+                        setEditedIngredients(newList);
+                      }
+                    }}
+                    onKeyPress={({ nativeEvent }) => {
+                      if (
+                        nativeEvent.key === 'Backspace' &&
+                        editedIngredients[idx] === '' &&
+                        editedIngredients.length > 1
+                      ) {
+                        const newList = [...editedIngredients];
+                        newList.splice(idx, 1);
+                        setEditedIngredients(newList);
+
+                        setTimeout(() => {
+                          if (ingredientRefs.current[idx - 1]) {
+                            ingredientRefs.current[idx - 1].focus();
+                          }
+                        }, 0);
+
+                      }
+                    }}
+                    multiline
+                  />
+                </View>
+              ))
+            ) : (
+              ingredients.map((item, idx) => (
+                <TouchableOpacity key={idx} onPress={() => setIsEditing(true)}>
+                  <Text style={styles.recipeStep}>• {item}</Text>
+                </TouchableOpacity>
+              ))
+            )}
+          </View>
+
+          <View>
             <Text style={styles.directionHeader}>Directions</Text>
-            {directions?.map((step:any, idx:any) => (
-            <Text key={idx} style={styles.recipeStep}>{idx + 1}. {step}</Text>
-            ))}
+            {isEditing ? (
+              editedDirections.map((step, idx) => (
+                <View key={idx} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={styles.recipeStep}>{idx + 1}. </Text>
+                  <TextInput
+                    ref={(ref) => (directionRefs.current[idx] = ref)}
+                    style={styles.editRecipeStep}
+                    value={step}
+                    multiline
+                    onChangeText={(text) => {
+                      if (text.endsWith('\n')) {
+                        const trimmed = text.trim();
+                        const newList = [...editedDirections];
+                        newList[idx] = trimmed;
+                        newList.splice(idx + 1, 0, '');
+                        setEditedDirections(newList);
+
+                        setTimeout(() => {
+                          if (directionRefs.current[idx + 1]) {
+                            directionRefs.current[idx + 1]?.focus();
+                          }
+                        }, 0);
+
+                      } else {
+                        const newList = [...editedDirections];
+                        newList[idx] = text;
+                        setEditedDirections(newList);
+                      }
+                    }}
+                    onKeyPress={({ nativeEvent }) => {
+                      if (
+                        nativeEvent.key === 'Backspace' &&
+                        editedDirections[idx] === '' &&
+                        editedDirections.length > 1
+                      ) {
+                        const newList = [...editedDirections];
+                        newList.splice(idx, 1);
+                        setEditedDirections(newList);
+
+                        setTimeout(() => {
+                          if (directionRefs.current[idx - 1]) {
+                            directionRefs.current[idx - 1]?.focus();
+                          }
+                        }, 0);
+
+                      }
+                    }}
+                  />
+                </View>
+              ))
+            ) : (
+              directions.map((step, idx) => (
+                <TouchableOpacity key={idx} onPress={() => setIsEditing(true)}>
+                  <Text style={styles.recipeStep}>{idx + 1}. {step}</Text>
+                </TouchableOpacity>
+              ))
+            )}
+          </View>
+
+          {isEditing && (
+            <View style={{ alignItems: 'center'}}>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={() => {
+                  setIngredients(editedIngredients);
+                  setDirections(editedDirections);
+                  setIsEditing(false);
+                }}
+              >
+                <Text style={styles.generateButtonText}>Save Changes</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </ScrollView>
     </View>
   );
@@ -161,12 +301,11 @@ export default function RecipeScreen() {
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: '#FEFADF',
+    backgroundColor: colors.lightPrimary,
     height: "100%",
     alignItems: "center",
   },
   container: {
-    backgroundColor: '#FEFADF',
     padding: 10,
   },
   title: {
@@ -195,7 +334,7 @@ const styles = StyleSheet.create({
   },
   clearView: {
     borderStyle: "solid",
-    borderColor: "#A4C18B",
+    borderColor: colors.lightSecondary,
     borderWidth: 3,
     borderRadius: 20,
     marginRight: 10,
@@ -206,7 +345,7 @@ const styles = StyleSheet.create({
   },
   clearText: {
     fontSize: 14,
-    color: '#495340',
+    color: colors.darkPrimary,
     fontWeight: "bold"
   },
   recipeText: {
@@ -230,7 +369,7 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   generatePrompt: {
-    backgroundColor: "#E0DCC5",
+    backgroundColor: colors.lightSecondary,
     width: "90%",
     borderRadius: 20,
     padding: 10,
@@ -245,13 +384,25 @@ const styles = StyleSheet.create({
     fontStyle: "italic"
   },
   generateButton: {
-    backgroundColor: '#A4C18B',
+    backgroundColor: colors.darkPrimary,
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 10,
   },
+  saveButton: {
+    backgroundColor: colors.darkPrimary,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    marginTop: 15
+  },
   generateButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-  }
+  },
+  editRecipeStep: {
+    backgroundColor: "white",
+    padding: 5,
+    width: "90%",
+  },
 })

@@ -68,12 +68,6 @@ export default function RecipeScreen() {
           if (data) {
             const parsedData = JSON.parse(data);
 
-            if (!parsedData.ingredients.length || !parsedData.directions.length) {
-                setGeneratePrompt("It looks like the recipe for this dish is either incomplete or missing. AI-generate one instead?");
-            } else {
-                setGeneratePrompt('Not the recipe you\'re looking for? AI-generate a new one instead!');
-            }
-
             setRecipe(parsedData);
             setIngredients(parsedData.ingredients || []);
             setDirections(parsedData.directions || []);
@@ -81,6 +75,15 @@ export default function RecipeScreen() {
             setEditedIngredients(parsedData.ingredients || []);
             setEditedDirections(parsedData.directions || []);
 
+            if (!parsedData.ingredients.length || !parsedData.directions.length) {
+              setIngredients([" "]);
+              setDirections([" "]);
+              setEditedIngredients([" "]);
+              setEditedDirections([" "]);
+              setGeneratePrompt("It looks like the recipe for this dish is either incomplete or missing. AI-generate one instead?");
+            } else {
+                setGeneratePrompt('Not the recipe you\'re looking for? AI-generate a new one instead!');
+            }
           }
         } catch (error) {
           console.error('Error fetching saved recipe:', error);

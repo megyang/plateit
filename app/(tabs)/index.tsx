@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { ScrollView, View, SafeAreaView, StyleSheet, TextInput } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { ScrollView, View, SafeAreaView, StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
 import PostCard from '../../components/PostCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 import Header from '../../components/Header';
 import { colors } from '@/constants/Colors';
 
@@ -46,6 +48,29 @@ const samplePosts = [
 ];
 
 export default function HomeFeed() {
+  const [searchText, setSearchText] = useState('');
+  const [userPosts, setUserPosts] = useState<any[]>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadPosts = async () => {
+        try {
+          const stored = await AsyncStorage.getItem('posts');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            setUserPosts(parsed);
+          } else {
+            setUserPosts([]);
+          }
+        } catch (error) {
+          console.error("Error loading saved posts:", error);
+        }
+      };
+
+      loadPosts();
+    }, [])
+  );
+
   const handleSearch = (text: string) => {
     setSearchText(text);
     if (text === '') {
@@ -53,19 +78,40 @@ export default function HomeFeed() {
       
     }
   };
-
-  const [searchText, setSearchText] = useState('');
   
+  // To reset stuff
+  const clearAllPosts = async () => {
+    try {
+      await AsyncStorage.removeItem('posts');
+    } catch (error) {
+      console.error("Error clearing posts:", error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safe}>
       <Header />
       <ScrollView contentContainerStyle={styles.container}>
-      <TextInput
+
+        {/* For testing and dev purposes, not part of final demo */}
+        {/* <TouchableOpacity
+          style={{ backgroundColor: '#ccc' }}
+          onPress={clearAllPosts}
+        >
+          <Text style={{ color: '#000' }}>Undo Post</Text>
+        </TouchableOpacity> */}
+
+        <TextInput
           style={styles.searchBar}
           placeholder= "Search Feed"
           value={searchText}
           onChangeText={handleSearch}
         />
+
+        {userPosts.map((post, idx) => (
+          <PostCard key={idx} post={post} />
+        ))}
+
         {samplePosts.map((post, idx) => (
           <PostCard key={idx} post={post} />
         ))}

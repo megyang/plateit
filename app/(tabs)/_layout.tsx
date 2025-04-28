@@ -1,6 +1,5 @@
 import { Tabs, SplashScreen } from 'expo-router';
 import { useEffect } from 'react';
-import { Platform } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/constants/Colors';

@@ -18,7 +18,7 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       <View style={styles.header}></View>
       <View style={styles.avatar}>
-        <Ionicons name={"person"} size={80} color={colors.lightSecondary} />
+        <Ionicons name={"person"} size={80} color={colors.darkPrimary} />
       </View> 
       <View style={styles.userText}>
         <Text style={styles.name}>Cindy Yang</Text>
@@ -62,18 +62,18 @@ const styles = StyleSheet.create({
   header: {
     width: "100%",
     height: 110,
-    backgroundColor: colors.lightSecondary
+    backgroundColor: colors.darkPrimary
   },
   avatar: {
     height: 110,
     width: 110,
     position: "absolute",
     borderRadius: 50,
-    backgroundColor: colors.darkPrimary,
+    backgroundColor: colors.accentColor,
     alignItems: 'center',
     justifyContent: 'center',
     borderStyle: "solid",
-    borderColor: colors.lightSecondary,
+    borderColor: colors.darkPrimary,
     top: 55,
     left: 150,
     borderWidth: 5,

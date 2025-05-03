@@ -32,6 +32,8 @@ export default function PostCard({ post }: { post: Post }) {
       text: 'I had to bake my cheescake for 1 hour and 20 minutes for it to fully set.' },
   ]);
   const [newComment, setNewComment] = useState('');
+  const [showRateModal, setShowRateModal] = useState(false);
+  const [selectedRating, setSelectedRating] = useState(0);
 
 
   const handleDoubleTap = () => {
@@ -42,6 +44,7 @@ export default function PostCard({ post }: { post: Post }) {
   };
 
   const handleRate = () => {
+    setShowRateModal(true)
     if (!rated) {
       setRated(true);
     }
@@ -176,10 +179,7 @@ export default function PostCard({ post }: { post: Post }) {
         <View style={styles.rateContainer}>
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={async () => {
-              setRated(true);
-              // handle rating popup here
-            }}
+            onPress={handleRate}
           >
             <Text style={{ fontSize: 18, marginRight: 3 }}>Rate</Text>
             <AntDesign 
@@ -192,7 +192,6 @@ export default function PostCard({ post }: { post: Post }) {
         <View style={styles.discussionContainer}>
           <TouchableOpacity
             style={styles.actionButton}
-            // onPress={() => setShowDiscussion(true)}
             onPress={() => setIsModalVisible(true)}
           >
             <Text style={{ fontSize: 18, marginRight: 3 }}>View Discussion</Text>
@@ -257,6 +256,47 @@ export default function PostCard({ post }: { post: Post }) {
           </TouchableWithoutFeedback>
         </Modal>
       )}
+
+    {showRateModal && (
+      <Modal
+        transparent
+        animationType="fade"
+        visible={showRateModal}
+        onRequestClose={() => setShowRateModal(false)}
+      >
+        <TouchableOpacity
+          style={styles.rateModalOverlay}
+          activeOpacity={1}
+          onPressOut={() => setShowRateModal(false)}
+        >
+          <View style={styles.modalCenter}>
+            <Text style={styles.rateModalTitle}>Rate this Recipe</Text>
+            <View style={styles.starRow}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <TouchableOpacity key={star} onPress={() => setSelectedRating(star)}>
+                  <AntDesign
+                    name={selectedRating >= star ? 'star' : 'staro'}
+                    size={30}
+                    color={colors.accentColor}
+                    style={{ marginHorizontal: 4 }}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+            <TouchableOpacity
+              style={styles.rateButton}
+              onPress={() => {
+                setRated(true);
+                setShowRateModal(false);
+                // Optionally do something with `selectedRating`
+              }}
+            >
+              <Text style={styles.rateButtonText}>Rate</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    )}
 
     </View>
   );
@@ -490,5 +530,38 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginRight: 10,
+    marginTop: 7
   }, 
+  rateModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.69)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }, 
+  modalCenter: {
+    backgroundColor: colors.lightPrimary,
+    padding: 20,
+    borderRadius: 15,
+    alignItems: 'center',
+    width: '80%',
+  },
+  rateModalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  }, 
+  starRow: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  rateButton: {
+    backgroundColor: colors.darkPrimary,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+  },
+  rateButtonText: {
+    color: 'white',
+    fontSize: 16,
+  }
 });

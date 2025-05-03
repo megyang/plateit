@@ -73,11 +73,12 @@ export default function HomeFeed() {
 
   const handleSearch = (text: string) => {
     setSearchText(text);
-    if (text === '') {
-    } else {
-      
-    }
   };
+
+  const combinedPosts = [...userPosts, ...samplePosts];
+  const filteredPosts = combinedPosts.filter((post) =>
+    post.recipeName.toLowerCase().includes(searchText.toLowerCase())
+  );
   
   // To reset stuff
   const clearAllPosts = async () => {
@@ -108,11 +109,7 @@ export default function HomeFeed() {
           onChangeText={handleSearch}
         />
 
-        {userPosts.map((post, idx) => (
-          <PostCard key={idx} post={post} />
-        ))}
-
-        {samplePosts.map((post, idx) => (
+        {filteredPosts.map((post, idx) => (
           <PostCard key={idx} post={post} />
         ))}
       </ScrollView>

@@ -16,6 +16,10 @@ type Post = {
   recipeTime: string;
   ingredients: string[];
   directions: string[];
+  rating: string;
+  ratingCount: number;
+  likes: number;
+  comments: string[];
 };
 
 export default function PostScreen() {
@@ -49,13 +53,17 @@ export default function PostScreen() {
 
     const newPost: Post = {
       username: "cindy_yang",
-      time: "Today at 5:45PM",
+      time: "Today at 3:12PM",
       avatar: '',
       image: require('../../assets/images/breakfast-sandwich.png'),
       recipeName: recipeName.trim(),
       recipeTime: recipeTime.trim(),
       ingredients: ingredients.filter(ing => ing.trim() !== ''),
       directions: directions.filter(dir => dir.trim() !== ''),
+      rating: "N/A",
+      ratingCount: 0,
+      likes: 0,
+      comments: []
     };
   
     try {

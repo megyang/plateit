@@ -16,9 +16,10 @@ type Post = {
   recipeTime: string;
   ingredients: string[];
   directions: string[];
-  rating: number;
+  rating: string;
   ratingCount: number;
   likes: number;
+  comments: any;
 };
 
 export default function PostCard({ post }: { post: Post }) {
@@ -28,15 +29,11 @@ export default function PostCard({ post }: { post: Post }) {
   const [rated, setRated] = useState(false);
   const [showSavedPopup, setShowSavedPopup] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [comments, setComments] = useState([
-    { username: 'megan',
-      text: 'I substituted the graham cracker crumbs with cookie crumbs, and my cheesecake turned out great!' },
-    { username: 'yinqi',
-      text: 'I had to bake my cheescake for 1 hour and 20 minutes for it to fully set.' },
-  ]);
+  const [comments, setComments] = useState(post.comments);
   const [newComment, setNewComment] = useState('');
   const [showRateModal, setShowRateModal] = useState(false);
   const [selectedRating, setSelectedRating] = useState(0);
+  const [ratingCount, setRatingCount] = useState(post.ratingCount);
 
 
   const handleDoubleTap = () => {
@@ -48,9 +45,6 @@ export default function PostCard({ post }: { post: Post }) {
 
   const handleRate = () => {
     setShowRateModal(true)
-    if (!rated) {
-      setRated(true);
-    }
   };
 
   const toggleSavePost = async (post: Post) => {
@@ -79,7 +73,7 @@ export default function PostCard({ post }: { post: Post }) {
           <View style={styles.rating}>
             <Text style={styles.ratingNumber}>{post.rating}</Text>
             <AntDesign name="star" size={17} color="black" style={styles.starIcon} />
-            <Text style={styles.ratingText}>({post.ratingCount})</Text>
+            <Text style={styles.ratingText}>({ratingCount})</Text>
           </View>
         </View>
 
@@ -227,7 +221,7 @@ export default function PostCard({ post }: { post: Post }) {
                     contentContainerStyle={styles.commentsContainer}
                     keyboardShouldPersistTaps="handled"
                   >
-                    {comments.map((comment, index) => (
+                    {comments.map((comment: any, index: any) => (
                       <Text key={index} style={styles.commentText}>
                         <Text style={styles.usernameText}>{comment.username} says: </Text>
                         {comment.text}
@@ -273,7 +267,7 @@ export default function PostCard({ post }: { post: Post }) {
           onPressOut={() => setShowRateModal(false)}
         >
           <View style={styles.modalCenter}>
-            <Text style={styles.rateModalTitle}>Rate this Recipe</Text>
+            <Text style={styles.rateModalTitle}>Rate this recipe</Text>
             <View style={styles.starRow}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <TouchableOpacity key={star} onPress={() => setSelectedRating(star)}>
@@ -289,9 +283,13 @@ export default function PostCard({ post }: { post: Post }) {
             <TouchableOpacity
               style={styles.rateButton}
               onPress={() => {
-                setRated(true);
+                // setRated(true);
+                // setShowRateModal(false);
+                if (!rated) {
+                  setRated(true);
+                  setRatingCount(prev => prev + 1);
+                }
                 setShowRateModal(false);
-                // Optionally do something with `selectedRating`
               }}
             >
               <Text style={styles.rateButtonText}>Rate</Text>
@@ -546,7 +544,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 15,
     alignItems: 'center',
-    width: '80%',
+    width: '70%',
   },
   rateModalTitle: {
     fontSize: 20,
@@ -566,5 +564,6 @@ const styles = StyleSheet.create({
   rateButtonText: {
     color: 'white',
     fontSize: 16,
+    fontWeight: "bold"
   }
 });

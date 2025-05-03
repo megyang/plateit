@@ -14,7 +14,7 @@ const samplePosts = [
     image: require('../../assets/images/cheesecake.jpg'),
     recipeName: 'Blueberry Cheesecake',
     recipeTime: '1hr 45min',
-    rating: 4.9,
+    rating: "4.9",
     ratingCount: 24,
     likes: 27,
     ingredients: [
@@ -27,6 +27,12 @@ const samplePosts = [
       'Mix crust ingredients and press into pan.',
       'Beat cream cheese, then bake for 1 hour.',
     ],
+    comments: [
+        { username: 'megan',
+          text: 'I substituted the graham cracker crumbs with cookie crumbs, and my cheesecake turned out great!' },
+        { username: 'yinqi',
+          text: 'I had to bake my cheescake for 1 hour and 20 minutes for it to fully set.' },
+    ]
   },
   {
     username: 'megan.pdf',
@@ -35,11 +41,14 @@ const samplePosts = [
     image: require('../../assets/images/spaghetti.jpg'),
     recipeName: 'Spaghetti with Garlic Butter',
     recipeTime: '40min',
-    rating: 3.8,
+    rating: "3.8",
     ratingCount: 12,
     likes: 15,
     ingredients: ['Spaghetti', 'Garlic', 'Butter'],
     directions: ['Boil pasta', 'Sauté garlic in butter', 'Combine and serve'],
+    comments: [
+
+    ]
   },
   {
     username: 'yinqi',
@@ -48,11 +57,68 @@ const samplePosts = [
     image: require('../../assets/images/pancake-breakfast.jpg'),
     recipeName: 'Pancake Breakfast',
     recipeTime: '1hr 10min',
-    rating: 4.2,
+    rating: "4.2",
     ratingCount: 8,
     likes: 19,
     ingredients: [],
     directions: [],
+    comments: []
+  },
+  {
+    username: 'cindy_yang',
+    time: 'May 3 at 7:59PM',
+    avatar: '',
+    image: require('../../assets/images/cc_cookie.jpg'),
+    recipeName: 'Chocolate Chip Cookies',
+    recipeTime: '1hr 10min',
+    rating: "4.7",
+    ratingCount: 9,
+    likes: 31,
+    ingredients: [],
+    directions: [],
+    comments: []
+  },
+  {
+    username: 'dilini_1',
+    time: 'May 3 at 3:59PM',
+    avatar: '',
+    image: require('../../assets/images/pizza.jpg'),
+    recipeName: 'Mushroom Pizza',
+    recipeTime: '1hr 30 min',
+    rating: "4.7",
+    ratingCount: 5,
+    likes: 22,
+    ingredients: [],
+    directions: [],
+    comments: []
+  },
+  {
+    username: 'megan.pdf',
+    time: 'May 3 at 3:01PM',
+    avatar: '',
+    image: require('../../assets/images/mousse.jpg'),
+    recipeName: 'Chocolate Mousse',
+    recipeTime: '3hr',
+    rating: "4.9",
+    ratingCount: 13,
+    likes: 28,
+    ingredients: [],
+    directions: [],
+    comments: []
+  },
+  {
+    username: 'cindy_yang',
+    time: 'May 2 at 6:24PM',
+    avatar: '',
+    image: require('../../assets/images/chicken.jpg'),
+    recipeName: 'Sheet Pan Chicken Dinner',
+    recipeTime: '1hr',
+    rating: "4.5",
+    ratingCount: 11,
+    likes: 23,
+    ingredients: [],
+    directions: [],
+    comments: []
   },
 ];
 
@@ -133,7 +199,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 0,
-    paddingBottom: 100,
+    paddingBottom: 50,
   },
   searchBar: {
     backgroundColor: '#fff',

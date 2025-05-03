@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   recipeText: {
     width: '100%',
     paddingHorizontal: 8,
-    paddingVertical: 12,
+    paddingBottom: 12,
     paddingLeft: 20,
     flex: 1,
     marginBottom: 10
@@ -377,6 +377,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     marginTop: 15,
+    marginBottom: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },

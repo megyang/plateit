@@ -6,12 +6,10 @@ import { colors } from '@/constants/Colors';
 
 export default function ProfileScreen() {
   const images = [
-    require('../../assets/images/cheesecake.jpg'),
-    require('../../assets/images/spaghetti.jpg'),
-    require('../../assets/images/pancake-breakfast.jpg'),
     require('../../assets/images/breakfast-sandwich.png'),
-    require('../../assets/images/spaghetti.jpg'),
     require('../../assets/images/cheesecake.jpg'),
+    require('../../assets/images/cc_cookie.jpg'),
+    require('../../assets/images/chicken.jpg'),
   ];
   
   return (
@@ -32,7 +30,7 @@ export default function ProfileScreen() {
       <ScrollView style={styles.postContainer}>
         <View style={styles.postContainerHeader}>
           <View style={[styles.numberContainer, styles.numberBorder]}>
-            <Text style={styles.number}>13</Text>
+            <Text style={styles.number}>4</Text>
             <Text>recipes</Text>
           </View>
           <View style={[styles.numberContainer, styles.numberBorder]}>
@@ -127,7 +125,7 @@ const styles = StyleSheet.create({
   imageGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     paddingHorizontal: 10,
     marginTop: 10,
   },
@@ -135,5 +133,6 @@ const styles = StyleSheet.create({
     width: '32.5%', 
     aspectRatio: 1,
     marginBottom: 5,
+    marginRight: 3
   },
 })

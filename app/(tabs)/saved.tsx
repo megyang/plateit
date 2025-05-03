@@ -16,6 +16,10 @@ type Post = {
   recipeTime: string;
   ingredients: string[];
   directions: string[];
+  rating: string;
+  ratingCount: number;
+  likes: number;
+  comments: string[];
 };
 
 export default function SavedScreen() {

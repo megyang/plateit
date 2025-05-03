@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, Modal, View, Text, TextInput, Image, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import FlipCard from './FlipCard';
 import { router } from 'expo-router';
@@ -24,6 +24,15 @@ export default function PostCard({ post }: { post: Post }) {
   const [likeText, setLikeText] = useState("Liked by 27 others");
   const [rated, setRated] = useState(false);
   const [showSavedPopup, setShowSavedPopup] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [comments, setComments] = useState([
+    { username: 'megan',
+      text: 'I substituted the graham cracker crumbs with cookie crumbs, and my cheesecake turned out great!' },
+    { username: 'yinqi',
+      text: 'I had to bake my cheescake for 1 hour and 20 minutes for it to fully set.' },
+  ]);
+  const [newComment, setNewComment] = useState('');
+
 
   const handleDoubleTap = () => {
     if (!liked) {
@@ -183,12 +192,71 @@ export default function PostCard({ post }: { post: Post }) {
         <View style={styles.discussionContainer}>
           <TouchableOpacity
             style={styles.actionButton}
+            // onPress={() => setShowDiscussion(true)}
+            onPress={() => setIsModalVisible(true)}
           >
             <Text style={{ fontSize: 18, marginRight: 3 }}>View Discussion</Text>
             <Ionicons name="chatbubble-outline" size={23} style={styles.discussionIcon} />
           </TouchableOpacity>
         </View>
       </View>
+
+      {isModalVisible && (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <TouchableWithoutFeedback onPress={() => setIsModalVisible(false)}>
+            <View style={styles.modalOverlay}>
+              <TouchableWithoutFeedback>
+                <KeyboardAvoidingView
+                  style={styles.modalContainer}
+                  behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                >
+                  <View style={styles.modalHeader}>
+                    <Text style={styles.modalTitle}>Discussion</Text>
+                    <Ionicons name="chatbubble-outline" size={24} />
+                  </View>
+
+                  <ScrollView
+                    style={styles.commentsScroll}
+                    contentContainerStyle={styles.commentsContainer}
+                    keyboardShouldPersistTaps="handled"
+                  >
+                    {comments.map((comment, index) => (
+                      <Text key={index} style={styles.commentText}>
+                        <Text style={styles.usernameText}>{comment.username} says: </Text>
+                        {comment.text}
+                      </Text>
+                    ))}
+                  </ScrollView>
+
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      style={styles.input}
+                      value={newComment}
+                      onChangeText={setNewComment}
+                      placeholder="Add a comment..."
+                    />
+                    <TouchableOpacity
+                      onPress={() => {
+                        if (newComment.trim() !== '') {
+                          setComments([...comments, { username: 'cindy_yang', text: newComment.trim() }]);
+                          setNewComment('');
+                        }
+                      }}
+                    >
+                      <Ionicons name="send" size={24} color={colors.darkPrimary} />
+                    </TouchableOpacity>
+                  </View>
+                </KeyboardAvoidingView>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      )}
 
     </View>
   );
@@ -202,47 +270,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 4,
   },
-
   ratingNumber: {
     fontSize: 16,
     fontWeight: "bold"
   },
-
   ratingText: {
     fontSize: 16,
   },
-
   bottomRow: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   timeText: {
     fontSize: 14,
     marginLeft: 5
   },
-
   starIcon: {
     marginLeft: 3,
     marginRight: 3,
     color: colors.accentColor
   },
-
   clockIcon: {
     color: colors.darkPrimary
   },
-
   likeIcon: {
     color: colors.darkPrimary
   },
-
   savedPopup: {
     position: 'absolute',
     bottom: 20,
@@ -255,43 +314,36 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     zIndex: 10,
   },
-  
   popupImage: {
     width: 40,
     height: 40,
     borderRadius: 8,
     marginRight: 10,
   },
-  
   popupTextContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     flex: 1,
   },
-  
   savedText: {
     color: '#000',
     fontSize: 16,
-  },
-  
+  }, 
   goText: {
     fontSize: 16,
     color: colors.darkPrimary,
     fontWeight: '500',
   },
-
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
     marginTop: -10
   },
-
   likeContainer: {
     flexDirection: 'row',
-  },
-  
+  },  
   actionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -303,79 +355,65 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5
   },
-  
   saveContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   rateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   discussionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  
   discussionIcon: {
     marginRight: 6,
   },
-
   card: {
     position: 'relative',
     backgroundColor: colors.lightPrimary,
     padding: 0,
     marginBottom: 30,
   },
-  
   header: {
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
     width: '100%',
     paddingHorizontal: 10,
-  },
-  
+  }, 
   recipeName: {
     fontSize: 21,
     fontWeight: 500,
   },
-
   postAuthor: {
     width: "100%",
     justifyContent: "space-between",
     marginLeft: 10
-  },
-  
+  },  
   username: {
     fontWeight: 'bold',
     fontSize: 16,
-  },
-  
+  },  
   time: {
     fontSize: 12,
     color: '#666',
     marginRight: 10
   },  
-
   image: {
     width: '100%',
     height: 350,
   },
-
   imageContainer: {
     position: 'relative',
     width: '100%',
     height: "auto",
   },
-
   retweetIcon: {
     position: 'absolute',
     top: 8,
@@ -387,20 +425,70 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 1,
   },
-
   recipe: {
     position: "absolute",
     marginLeft: 20,
     marginTop: 20,
   },
-
   rating: {
     flexDirection: "row",
   },
-
   title: {
     fontWeight: 'bold',
     marginTop: 8,
     marginBottom: 5
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.69)',
+    justifyContent: 'flex-end',
+  },  
+  modalContainer: {
+    backgroundColor: colors.lightPrimary,
+    padding: 16,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    height: '60%',
+  },  
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+  },  
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginRight: 8,
+  },
+  commentsScroll: {
+    marginBottom: 10,
+  },  
+  commentsContainer: {
+    paddingBottom: 10,
+  },  
+  commentText: {
+    fontSize: 15,
+    marginBottom: 15,
+  }, 
+  usernameText: {
+    fontWeight: 'bold',
+  },  
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: colors.darkPrimary,
+    paddingTop: 8,
+    marginBottom: 50
+  },  
+  input: {
+    flex: 1,
+    height: 40,
+    borderColor: colors.darkPrimary,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginRight: 10,
+  }, 
 });

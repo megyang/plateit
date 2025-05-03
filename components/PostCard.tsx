@@ -16,12 +16,15 @@ type Post = {
   recipeTime: string;
   ingredients: string[];
   directions: string[];
+  rating: number;
+  ratingCount: number;
+  likes: number;
 };
 
 export default function PostCard({ post }: { post: Post }) {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [likeText, setLikeText] = useState("Liked by 27 others");
+  const [likeText, setLikeText] = useState(`Liked by ${post.likes} others`);
   const [rated, setRated] = useState(false);
   const [showSavedPopup, setShowSavedPopup] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -74,9 +77,9 @@ export default function PostCard({ post }: { post: Post }) {
         <View style={styles.topRow}>
           <Text style={styles.recipeName}>{post.recipeName}</Text>
           <View style={styles.rating}>
-            <Text style={styles.ratingNumber}>4.9</Text>
+            <Text style={styles.ratingNumber}>{post.rating}</Text>
             <AntDesign name="star" size={17} color="black" style={styles.starIcon} />
-            <Text style={styles.ratingText}>(24)</Text>
+            <Text style={styles.ratingText}>({post.ratingCount})</Text>
           </View>
         </View>
 
@@ -141,7 +144,7 @@ export default function PostCard({ post }: { post: Post }) {
           <TouchableOpacity
             onPress={() => {
               setLiked(!liked);
-              setLikeText(prev => liked ? "Liked by 27 others" : "Liked by you and 27 others");
+              setLikeText(prev => liked ? `Liked by ${post.likes} others` : `Liked by you and ${post.likes} others`);
             }}
           >
             <AntDesign name={liked ? 'like1' : 'like2'} size={20} style={styles.likeIcon} />

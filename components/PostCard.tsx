@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, Modal, View, Text, TextInput, Image, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import FlipCard from './FlipCard';
@@ -35,6 +35,11 @@ export default function PostCard({ post }: { post: Post }) {
   const [selectedRating, setSelectedRating] = useState(0);
   const [ratingCount, setRatingCount] = useState(post.ratingCount);
 
+  useEffect(() => {
+    setLikeText(`Liked by ${post.likes} others`);
+    setComments(post.comments);
+    setRatingCount(post.ratingCount);
+  }, [post]);
 
   const handleDoubleTap = () => {
     if (!liked) {

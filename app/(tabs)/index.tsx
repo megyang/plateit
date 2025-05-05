@@ -9,7 +9,7 @@ import { colors } from '@/constants/Colors';
 const samplePosts = [
   {
     username: 'cindy_yang',
-    time: 'Today at 8:34PM',
+    time: 'Yesterday at 11:34PM',
     avatar: '',
     image: require('../../assets/images/cheesecake.jpg'),
     recipeName: 'Blueberry Cheesecake',
@@ -28,7 +28,7 @@ const samplePosts = [
       'Beat cream cheese, then bake for 1 hour.',
     ],
     comments: [
-        { username: 'megan',
+        { username: 'megan.pdf',
           text: 'I substituted the graham cracker crumbs with cookie crumbs, and my cheesecake turned out great!' },
         { username: 'yinqi',
           text: 'I had to bake my cheescake for 1 hour and 20 minutes for it to fully set.' },
@@ -47,7 +47,8 @@ const samplePosts = [
     ingredients: ['Spaghetti', 'Garlic', 'Butter'],
     directions: ['Boil pasta', 'Sauté garlic in butter', 'Combine and serve'],
     comments: [
-
+      { username: 'dilini_1',
+        text: 'Love this recipe! I\'ve also made it with different noddle types, like rigatoni, and it\'s always been delicious.' }
     ]
   },
   {
@@ -60,8 +61,8 @@ const samplePosts = [
     rating: "4.2",
     ratingCount: 8,
     likes: 19,
-    ingredients: [],
-    directions: [],
+    ingredients: ["pancakes", "berries", "yogurt"],
+    directions: ["Prepare pancakes", "Garnish with berries", "Serve with yogurt"],
     comments: []
   },
   {

@@ -71,7 +71,7 @@ export default function PostScreen() {
       const posts: Post[] = existingData ? JSON.parse(existingData) : [];
       const updatedPosts = [newPost, ...posts];
       await AsyncStorage.setItem('posts', JSON.stringify(updatedPosts));
-  
+      console.log(updatedPosts[0].ratingCount);
       setRecipeName('');
       setRecipeTime('');
       setIngredients([' ']);

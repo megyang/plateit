@@ -34,12 +34,12 @@ export default function ProfileScreen() {
             <Text>recipes</Text>
           </View>
           <View style={[styles.numberContainer, styles.numberBorder]}>
-            <Text style={styles.number}>137</Text>
+            <Text style={styles.number}>78</Text>
             <Text>likes</Text>
           </View>
           <View style={styles.numberContainer}>
-            <Text style={styles.number}>98</Text>
-            <Text>reviews</Text>
+            <Text style={styles.number}>44</Text>
+            <Text>ratings</Text>
           </View>
         </View>
         <View style={styles.imageGrid}>

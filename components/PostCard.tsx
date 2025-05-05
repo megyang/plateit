@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: 0,
     right: 0,
-    backgroundColor: '#E0DCC5',
+    backgroundColor: colors.lightSecondary,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
